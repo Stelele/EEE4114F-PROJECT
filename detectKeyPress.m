@@ -1,6 +1,6 @@
 function Val = detectKeyPress(x, fs)
     tolerance = 0.015; % frequency passband range
-    threshold = 60; % value above which detection has occured
+    threshold = 40; % value above which detection has occured
     
     fl = [697, 770, 852, 941];
     fh = [1209, 1336, 1477, 1633];
@@ -19,7 +19,7 @@ function Val = detectKeyPress(x, fs)
        kmin = floor(ftest * N * (1-tolerance)/fs);
        kmax = ceil(ftest * N * (1+tolerance)/fs);
        
-       detection = max(Xabs(kmin:kmax) >= threshold);
+       detection = max(Xabs(kmin:kmax) > threshold);
        
        if detection == 1
           flDetect(curpos) = 1;
