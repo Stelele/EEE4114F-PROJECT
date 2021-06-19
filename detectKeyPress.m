@@ -1,6 +1,6 @@
 function Val = detectKeyPress(x, fs)
     tolerance = 0.015; % frequency passband range
-    threshold = 40; % value above which detection has occured
+    threshold = 80; % value above which detection has occured
     
     fl = [697, 770, 852, 941];
     fh = [1209, 1336, 1477, 1633];
@@ -11,8 +11,9 @@ function Val = detectKeyPress(x, fs)
     N = length(x);
     kvals = 0:N/2;
     
-    Xabs = 20 * log(mygoertzel(x, kvals, N));
+    Xabs = 20 * log(abs(mygoertzel(x, kvals, N)));
     
+    plot(Xabs);
     %detect low frequency signal
     curpos = 1; 
     for ftest = fl
