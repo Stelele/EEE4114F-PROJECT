@@ -24,31 +24,18 @@ function Val = detectKeyPress(x, fs)
     kRowCenter = zeros(size(row));
     kColCenter = zeros(size(col));
     
-    % define array for k values for +1.5% + 2Hz
-    kRowRight = zeros(size(row));
-    kColRight = zeros(size(col));
-    
-    % define array for k values for -1.5% - 2Hz
-    kRowLeft = zeros(size(row));
-    kColLeft = zeros(size(col));
-    
      % calculate k values for center and tolerances for row frequencies
     for curPos = 1:length(row)
         kRowCenter(curPos) = round(N * row(curPos)/fs, 2);
-        kRowRight(curPos) = round(N * (row(curPos)*1.015 + 2)/fs, 2);
-        kRowLeft(curPos) =  round(N * (row(curPos)*0.985 - 2)/fs, 2);
     end
     
     % calculate k values for center and tolerances for col frequencies 
     for curPos = 1:length(col)
         kColCenter(curPos) = round(N * col(curPos)/fs, 2);
-        kColRight(curPos) = round(N * (col(curPos)*1.015 + 2)/fs, 2);
-        kColLeft(curPos) =  round(N * (col(curPos)*0.985 - 2)/fs, 2);
     end
     
     %signalEnergy = sum(abs(x)^2);
     candidateNumber = ones(size(row)) * -1;
-    
     
     for i = 1:4
         if i == 1
