@@ -73,28 +73,6 @@ function Val = detectKeyPress(x, fs)
         [rowMax, rowIndex] = max(XERowCenter);
         [colMax, colIndex] = max(XEColCenter); 
         
-        % check if signal within RBW
-        %{
-        XERowBands = mygoertzel(xSection, [kRowLeft(rowIndex) kRowRight(rowIndex)], N);
-        XEColBands = mygoertzel(xSection, [kColLeft(colIndex) kColRight(colIndex)], N);
-        
-        accRowLeftMin = XERowCenter * 0.985 -2;
-        accRowLeftMax = XERowCenter * 0.965;
-        accRowRightMin = XERowCenter * 1.015 + 2;
-        accRowRightMax = XERowCenter * 1.035;
-        
-        accColLeftMin = XEColCenter * 0.985 -2;
-        accColLeftMax = XEColCenter * 0.965;
-        accColRightMin = XEColCenter * 1.015 + 2;
-        accColRightMax = XEColCenter * 1.035;
-        
-        if XERowBands(1) < accRowLeftMin && XERowBands(1) > accRowLeftMax
-            candidateNumber(i) = -1;
-        elseif XERowBands(2) < accRowRightMin && XERowBands(2) > accRowRightMax
-            candidateNumber(i) = -1;
-        elseif XEColB
-        %}
-        
         % check signal power
         if rowMax + colMax < THR_SIG
             candidateNumber(i) = -1;
@@ -139,7 +117,7 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 3;
                             case 4
-                                candidateNumber(i) = 'A';
+                                candidateNumber(i) = "A";
                         end
                     case 2
                         switch colIndex
@@ -150,7 +128,7 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 6;
                             case 4
-                                candidateNumber(i) = 'B';
+                                candidateNumber(i) = "B";
                         end
                     case 3
                         switch colIndex
@@ -161,18 +139,18 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 9;
                             case 4
-                                candidateNumber(i) = 'C';
+                                candidateNumber(i) = "C";
                         end
                     case 4
                         switch colIndex
                             case 1
-                                candidateNumber(i) = '*';
+                                candidateNumber(i) = "*";
                             case 2
                                 candidateNumber(i) = 0;
                             case 3
-                                candidateNumber(i) = '#';
+                                candidateNumber(i) = "#";
                             case 4
-                                candidateNumber(i) = 'D';
+                                candidateNumber(i) = "D";
                         end
                 end
             end
