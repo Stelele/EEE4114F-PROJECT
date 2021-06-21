@@ -1,98 +1,155 @@
 function Val = detectKeyPress(x, fs)
-    tolerance = 0.015; % frequency passband range
-    threshold = 40; % value above which detection has occured
-    
-    fl = [697, 770, 852, 941];
-    fh = [1209, 1336, 1477, 1633];
-    
-    flDetect = zeros(size(fl));
-    fhDetect = zeros(size(fh)); 
+%{
+    This function detects if a single key exsists in a section of x
 
-    N = length(x);
-    kvals = 0:N/2;
+    Inputs:     x:  input signal section with possible key
+                fs: sampling rate
+
+    Outputs:    Val: value of key detected or -1 if no key found
+%}
+
+    N = 102; % sample length sections to be used
+    overlap = 16; % number of samples that overlap with each other 
+    THR_SIG = 20e-6;  % threshold sum of powers must be above 
+    THR_TWIREV = 8; % threshold in dB of acceptable reverse twist
+    THR_TWISTD = 4; % threshold in dB of acceptable standard twist
+    THR_ROWREL = 5e-6; % row relative threshold power must be above for all neighbours
+    THR_COLREL = 5e-6; % col relative threshold power must be above for all neighbours
     
-    Xabs = 20 * log(mygoertzel(x, kvals, N));
+    %define dtmf frequencies
+    row = [697 770 852 941];
+    col = [1209 1336 1477 1633];
+
+    % define array for k values for center frequencies
+    kRowCenter = zeros(size(row));
+    kColCenter = zeros(size(col));
     
-    %detect low frequency signal
-    curpos = 1; 
-    for ftest = fl
-       kmin = floor(ftest * N * (1-tolerance)/fs);
-       kmax = ceil(ftest * N * (1+tolerance)/fs);
-       
-       detection = max(Xabs(kmin:kmax) > threshold);
-       
-       if detection == 1
-          flDetect(curpos) = 1;
-       end
-       curpos = curpos + 1;
+     % calculate k values for center and tolerances for row frequencies
+    for curPos = 1:length(row)
+        kRowCenter(curPos) = round(N * row(curPos)/fs, 2);
     end
     
-    %detect high frequency signal
-    curpos = 1; 
-    for ftest = fh
-       kmin = floor(ftest * N * (1-tolerance)/fs);
-       kmax = ceil(ftest * N * (1+tolerance)/fs);
-       
-       detection = max(Xabs(kmin:kmax) >= threshold);
-       
-       if detection == 1
-          fhDetect(curpos) = 1;
-       end
-       curpos = curpos + 1;
+    % calculate k values for center and tolerances for col frequencies 
+    for curPos = 1:length(col)
+        kColCenter(curPos) = round(N * col(curPos)/fs, 2);
     end
     
-    %get position of frequency
-    [Ml, flIndex] = max(flDetect);
-    [Mh, fhIndex] = max(fhDetect);
+    %signalEnergy = sum(abs(x)^2);
+    candidateNumber = ones(size(row)) * -1;
     
-    if (Ml == 1) && (Mh == 1)
-        switch flIndex
-            case 1
-                switch fhIndex
-                    case 1
-                        Val = 1;
-                    case 2
-                        Val = 2;
-                    case 3
-                        Val = 3;
-                    case 4
-                        Val = 'A';
-                end
-            case 2
-                switch fhIndex
-                    case 1
-                        Val = 4;
-                    case 2
-                        Val = 5;
-                    case 3
-                        Val = 6;
-                    case 4
-                        Val = 'B';
-                end
-            case 3
-                switch fhIndex
-                    case 1
-                        Val = 7;
-                    case 2
-                        Val = 8;
-                    case 3
-                        Val = 9;
-                    case 4
-                        Val = 'C';
-                end
-            case 4
-                switch fhIndex
-                    case 1
-                        Val = '*';
-                    case 2
-                        Val = 0;
-                    case 3
-                        Val = '#';
-                    case 4
-                        Val = 'D';
-                end
+    for i = 1:4
+        if i == 1
+            startPos = (i-1)*N + 1;
+        else
+            startPos = (i-1)*N + 1 - overlap;
         end
-    else
-       Val = -1; 
+        endPos = startPos + N -1;
+        
+        %define window function
+        hammingWindow = hamming(N);
+        hammingWindow = reshape(hammingWindow, size(x(startPos:endPos)));
+        
+        %get section of signal for detection
+        xSection = x(startPos:endPos) .* hammingWindow;
+        
+        %calculate signal energy for 8 center frequencies
+        XERowCenter = mygoertzel(xSection, kRowCenter, N) / N;
+        XEColCenter = mygoertzel(xSection, kColCenter, N) / N;
+
+        % detemine max energy location for row and col frequencies
+        [rowMax, rowIndex] = max(XERowCenter);
+        [colMax, colIndex] = max(XEColCenter); 
+        
+        % check signal power
+        if rowMax + colMax < THR_SIG
+            candidateNumber(i) = -1;
+            
+        % check reverse twist 
+        elseif 10 * log(rowMax/colMax) > THR_TWIREV
+            candidateNumber(i) = -1;
+        
+        %check standard twist
+        elseif 10 * log(colMax/rowMax) > THR_TWISTD
+            candidateNumber(i) = -1;
+        else
+            %check relative diffrences between neighbours
+            rowDifferences = rowMax - XERowCenter;
+            colDifferences = colMax - XEColCenter;
+            
+            rowPass = 1;
+            colPass = 1;
+            
+            for j = 1:length(row)
+                if j ~= rowIndex && rowDifferences(j) < THR_ROWREL
+                    rowPass = 0;
+                end
+                
+                if j ~= colIndex && colDifferences(j) < THR_COLREL
+                    colPass = 0;
+                end
+            end
+            
+            if rowPass == 0 || colPass == 0
+                candidateNumber(i) = -1;
+            else
+               
+               % all tests passed added number to candidates
+               switch rowIndex
+                    case 1
+                        switch colIndex
+                            case 1
+                                candidateNumber(i) = 1;
+                            case 2
+                                candidateNumber(i) = 2;
+                            case 3
+                                candidateNumber(i) = 3;
+                            case 4
+                                candidateNumber(i) = "A";
+                        end
+                    case 2
+                        switch colIndex
+                            case 1
+                                candidateNumber(i) = 4;
+                            case 2
+                                candidateNumber(i) = 5;
+                            case 3
+                                candidateNumber(i) = 6;
+                            case 4
+                                candidateNumber(i) = "B";
+                        end
+                    case 3
+                        switch colIndex
+                            case 1
+                                candidateNumber(i) = 7;
+                            case 2
+                                candidateNumber(i) = 8;
+                            case 3
+                                candidateNumber(i) = 9;
+                            case 4
+                                candidateNumber(i) = "C";
+                        end
+                    case 4
+                        switch colIndex
+                            case 1
+                                candidateNumber(i) = "*";
+                            case 2
+                                candidateNumber(i) = 0;
+                            case 3
+                                candidateNumber(i) = "#";
+                            case 4
+                                candidateNumber(i) = "D";
+                        end
+                end
+            end
+        end        
     end
+    
+    % add final number if detected at least 3 times
+    numRejections = sum(candidateNumber == -1);
+    
+    if numRejections > 1
+        Val = -1;
+    else
+        Val = mode(candidateNumber);
+    end        
 end
