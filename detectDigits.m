@@ -12,7 +12,6 @@ function digits = detectDigits(x,fs)
     sampleLength = 3 * (N-overlap) + N;
     sampleNum = floor(length(x)/sampleLength);
     
-    
     digits = zeros(sampleNum,1);
     curpos = 1;
 

@@ -1,5 +1,5 @@
 
-[signal, fs] = audioread("recordings/network/dtmfN2.wav");
+[signal, fs] = audioread("recordings/network/dtmfN1.wav");
 
 %{
 f1 = 697;

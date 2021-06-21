@@ -10,11 +10,11 @@ function Val = detectKeyPress(x, fs)
 
     N = 102; % sample length sections to be used
     overlap = 16; % number of samples that overlap with each other 
-    THR_SIG = 2e-6;  % threshold sum of powers must be above 
+    THR_SIG = 20e-6;  % threshold sum of powers must be above 
     THR_TWIREV = 8; % threshold in dB of acceptable reverse twist
     THR_TWISTD = 4; % threshold in dB of acceptable standard twist
-    THR_ROWREL = 1e-6; % row relative threshold power must be above for all neighbours
-    THR_COLREL = 1e-6; % col relative threshold power must be above for all neighbours
+    THR_ROWREL = 5e-6; % row relative threshold power must be above for all neighbours
+    THR_COLREL = 5e-6; % col relative threshold power must be above for all neighbours
     
     %define dtmf frequencies
     row = [697 770 852 941];
