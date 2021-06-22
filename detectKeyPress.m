@@ -104,7 +104,7 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 3;
                             case 4
-                                candidateNumber(i) = "A";
+                                candidateNumber(i) = 'A';
                         end
                     case 2
                         switch colIndex
@@ -115,7 +115,7 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 6;
                             case 4
-                                candidateNumber(i) = "B";
+                                candidateNumber(i) = 'B';
                         end
                     case 3
                         switch colIndex
@@ -126,18 +126,18 @@ function Val = detectKeyPress(x, fs)
                             case 3
                                 candidateNumber(i) = 9;
                             case 4
-                                candidateNumber(i) = "C";
+                                candidateNumber(i) = 'C';
                         end
                     case 4
                         switch colIndex
                             case 1
-                                candidateNumber(i) = "*";
+                                candidateNumber(i) = '*';
                             case 2
                                 candidateNumber(i) = 0;
                             case 3
-                                candidateNumber(i) = "#";
+                                candidateNumber(i) = '#';
                             case 4
-                                candidateNumber(i) = "D";
+                                candidateNumber(i) = 'D';
                         end
                 end
             end
