@@ -11,8 +11,9 @@ function [telephonesA, telephonesB, telephonesC] = classify(digits)
     telephonesC = [];
     
     i = 1;
+    stop = length(digits) - 9;
     
-    while i <= length(digits)
+    while i <= stop
         
         telephone = zeros(10,1);
         provider = 'A';

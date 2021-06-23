@@ -28,13 +28,13 @@ function sequence = generate(samples, delay_width, noiselevel,name)
     Fs  = 8000;       % Sampling frequency 8 kHz
     N = 800;          % Tones of 100 ms
     t   = (0:N-1)/Fs; % 800 samples at Fs
-    pit = 2*pi*t;
+    pt = 2*pi*t;
     tones = zeros(N,size(f,2));
-    ampl = 10;
+    ampl = 4;
 
     for toneChoice=1:16
         % Generate tone
-        tones(:,toneChoice) = sum(sin(f(:,toneChoice)*pit))';
+        tones(:,toneChoice) = ampl * sum(sin(f(:,toneChoice)*pt))';
     end
     
     % Generate Sequence
@@ -51,13 +51,16 @@ function sequence = generate(samples, delay_width, noiselevel,name)
     end
     
     % add noise
-    noise = wgn(length(sequence), 1, -100);
+    noise = wgn(length(sequence), 1, noiselevel, 'dBm');
     sequence = sequence + noise;
     
+    % normalise data
+    dataMax = max(abs(sequence));
+    sequence = sequence / dataMax;
     % Write sequence to an Audio file
     audiowrite(name,sequence,Fs);
     
     % plot sequence
-    plot(sequence);
+    % plot(sequence);
     
 end
