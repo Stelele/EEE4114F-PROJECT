@@ -1,3 +1,11 @@
+%{
+    This script creates inputs used to test the detectDigits and classify
+    functions
+
+    The script creates audio files and saves them as .wav under the
+    numbers/ directory
+%}
+
 
 % Provider A
 generate(['0','7','2','2','5','0','0','0','0','6'], 500, -40 ,'numbers/num_A_1.wav');

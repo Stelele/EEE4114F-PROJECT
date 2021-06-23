@@ -1,3 +1,7 @@
+%{
+    This script can be used to test the dtmf deconder under the presence of
+    noise
+%}
 
 % Almost noise free
 generate(['0','1','2','3','4','5','6','7','8','9','A','B','C','D','*','#'], 500, -200 ,'numbers/noise_free.wav');
@@ -32,8 +36,8 @@ disp(digits2')
 % High noise
 generate(['0','1','2','3','4','5','6','7','8','9','A','B','C','D','*','#'], 500, 10 ,'numbers/noise_10dbm.wav');
 [signal3, fs] = audioread("numbers/noise_10dbm.wav");
-figure(500);
-spectrogram(signal3,128,120,128,fs,'yaxis');
+% figure(500);
+% spectrogram(signal3,128,120,128,fs,'yaxis');
 
 digits3 = detectDigits(signal3,fs);
 disp("10dbm Noise");

@@ -1,12 +1,15 @@
 function sequence = generate(samples, delay_width, noiselevel,name)
     % Generates a sequence DTMF tones seperated by a specified delay
     % 
-    % args:
+    % Inputs:
     %       samples <array(1,)> : the sequence of tones to generate as
-    %                             numbers. NOTE: * = 10; 0 = 11; # = 12
-    %                             e.g for *0123#45, samples = [10,11,1,2,3,12,4,5]
-    %       delay_width (int)   : delay between tones in (ms)
+    %                             characters. NOTE: use Alphabets for A,B,C,D
+    %                             e.g for *0123#45, samples = ['*','0','1','2','3','#','4','5']
+    %       delay_width (int)   : maximum delay between tones in (ms)
+    %       noiselevel (int)    : power of the noise signal in dbm
     %       name (String)       : name of the Audio file to write to (with extension)
+    % Outputs:
+    %       sequence <arrray>   : sequence with generated audio data
     %
     % courtesy of pavan chillapur: 
     % https://www.mathworks.com/matlabcentral/answers/305491-dtmf-tone-using-matlab
@@ -40,14 +43,14 @@ function sequence = generate(samples, delay_width, noiselevel,name)
     % Generate Sequence
     sequence = [];
     delay_max = (delay_width/1000) * Fs;
-    delay_N = round(delay_max*rand);
+    %delay_N = round(delay_max*rand);
     
     for sample = samples
-      sequence =  [sequence ; zeros(delay_N,1) ; tones(:,map(sample))];
       delay_N = round(delay_max*rand);
       if (delay_N < 65)
           delay_N = 65;
       end
+      sequence =  [sequence ; zeros(delay_N,1) ; tones(:,map(sample))];
     end
     
     % add noise
@@ -57,10 +60,9 @@ function sequence = generate(samples, delay_width, noiselevel,name)
     % normalise data
     dataMax = max(abs(sequence));
     sequence = sequence / dataMax;
+    
     % Write sequence to an Audio file
     audiowrite(name,sequence,Fs);
     
-    % plot sequence
-    % plot(sequence);
     
 end

@@ -1,6 +1,10 @@
 
-% Test the classifier
+%{
+    Test the classifier script used to test the detectDigits and classify
+    functions
 
+    insert the file name with the extension and observe results
+%}
 name = input('Enter File name: ', 's');
 [signal, fs] = audioread(name);
 
