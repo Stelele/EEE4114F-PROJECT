@@ -13,7 +13,7 @@ them according to artifictial providers used in this experiment.
 
 ## Running Tests
 ### Decoder Noise Performance
-run the [noise_test.m](noise_test.m) script to test the dtmf decoder for noise performance
+run the [test_noise.m](test_noise.m) script to test the dtmf decoder for noise performance
 
 ### Test Classifier
 run the [make_inputs](make_inputs.m) to generate input audio files under the [numbers](numbers/) directory
